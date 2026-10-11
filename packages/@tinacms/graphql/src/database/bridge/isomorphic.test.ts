@@ -246,6 +246,23 @@ describe('isomorphic bridge', () => {
         'content/authors/pedro.mdx',
       ]);
     });
+
+    test('file at the repository root', async () => {
+      await bridge.delete('README.md');
+      const result = await bridge.glob('', '.md');
+      expect(result).not.toContain('README.md');
+      await expect(bridge.get('README.md')).rejects.toThrow();
+    });
+
+    test('last file under a top-level folder', async () => {
+      await bridge.delete('content/posts/anotherPost.mdx');
+      await bridge.delete('content/posts/voteForPedro.mdx');
+      await bridge.delete('content/authors/napoleon.mdx');
+      await bridge.delete('content/authors/pedro.mdx');
+      const result = await bridge.glob('content', '.mdx');
+      expect(result).toEqual([]);
+      expect(await bridge.get('README.md')).toEqual(contentMap['README.md']);
+    });
   });
 
   describe.each([['repo'], ['monorepo']])(

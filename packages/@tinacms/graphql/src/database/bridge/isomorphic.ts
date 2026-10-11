@@ -482,14 +482,17 @@ export class IsomorphicBridge implements Bridge {
           tree: updatedTree,
         });
 
-        const updatedRootTreeOid = await this.updateTreeHierarchy(
-          existingOid,
-          updatedTreeOid,
-          pathParts[ptr - 1],
-          'tree',
-          pathEntries.slice(0, ptr - 1),
-          pathParts.slice(0, ptr - 1)
-        );
+        const updatedRootTreeOid =
+          ptr === 1
+            ? updatedTreeOid
+            : await this.updateTreeHierarchy(
+                existingOid,
+                updatedTreeOid,
+                pathParts[ptr - 1],
+                'tree',
+                pathEntries.slice(0, ptr - 1),
+                pathParts.slice(0, ptr - 1)
+              );
 
         await this.commitTree(updatedRootTreeOid, ref);
 
